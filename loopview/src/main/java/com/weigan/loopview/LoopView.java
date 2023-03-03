@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -162,6 +163,12 @@ public class LoopView extends View {
      */
     public void setTypeface(Typeface typeface) {
         this.typeface = typeface;
+        if (paintOuterText != null) {
+            paintOuterText.setTypeface(this.typeface);
+        }
+        if (paintCenterText != null) {
+            paintCenterText.setTypeface(this.typeface);
+        }
     }
 
     public LoopView(Context context) {
@@ -187,6 +194,10 @@ public class LoopView extends View {
 
         TypedArray typedArray = context.obtainStyledAttributes(attributeset, R.styleable.LoopView);
         if (typedArray != null) {
+            int fontFamilyId = typedArray.getResourceId(R.styleable.LoopView_android_fontFamily, 0);
+            if (fontFamilyId > 0) {
+                typeface = ResourcesCompat.getFont(getContext(), fontFamilyId);
+            }
             textSize = typedArray.getInteger(R.styleable.LoopView_awv_textsize, DEFAULT_TEXT_SIZE);
             textSize = (int) (Resources.getSystem().getDisplayMetrics().density * textSize);
             lineSpacingMultiplier = typedArray.getFloat(R.styleable.LoopView_awv_lineSpace, DEFAULT_LINE_SPACE);
