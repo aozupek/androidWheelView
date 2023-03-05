@@ -66,6 +66,7 @@ public class LoopView extends View {
     private Paint paintIndicator;
 
     List<IndexString> items;
+    List<Typeface> fonts;
 
     int textSize;
     int itemTextHeight; //单个item的高度
@@ -93,6 +94,7 @@ public class LoopView extends View {
 
     HashMap<Integer, IndexString> drawingStrings;
 //    HashMap<String,Integer> drawingStr
+    HashMap<Integer, Typeface> drawingFonts;
 
     int measuredHeight; //布局定义的高度
     int measuredWidth;
@@ -215,6 +217,10 @@ public class LoopView extends View {
         }
 
         drawingStrings = new HashMap<>();
+        if (fonts != null) {
+            drawingFonts = new HashMap<>();
+        }
+
         totalScrollY = 0;
         initPosition = -1;
 
@@ -235,6 +241,10 @@ public class LoopView extends View {
         if (visibleNumber != itemsVisibleCount) {
             itemsVisibleCount = visibleNumber;
             drawingStrings=new HashMap<>();
+
+            if (fonts != null) {
+                drawingFonts = new HashMap<>();
+            }
         }
     }
 
@@ -420,6 +430,23 @@ public class LoopView extends View {
         invalidate();
     }
 
+    public final void setFonts(List<Typeface> fonts) {
+        if (fonts == null) {
+            this.fonts = null;
+            this.drawingFonts = null;
+            setTypeface(this.typeface);
+        }
+        else {
+            this.fonts = new ArrayList<>(fonts);
+            if (this.drawingFonts == null) {
+                this.drawingFonts = new HashMap<>();
+            }
+        }
+
+        remeasure();
+        invalidate();
+    }
+
     public List<IndexString> convertData(List<String> items){
         List<IndexString> data=new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
@@ -513,15 +540,27 @@ public class LoopView extends View {
                     l1 = l1 - items.size();
                 }
                 drawingStrings.put(k1, items.get(l1));
+                if (drawingFonts != null) {
+                    drawingFonts.put(k1, fonts.get(l1));
+                }
             } else if (l1 < 0) {
 //                drawingStrings[k1] = "";
                 drawingStrings.put(k1,new IndexString());
+                if (drawingFonts != null) {
+                    drawingFonts.put(k1, null);
+                }
             } else if (l1 > items.size() - 1) {
 //                drawingStrings[k1] = "";
                 drawingStrings.put(k1,new IndexString());
+                if (drawingFonts != null) {
+                    drawingFonts.put(k1, null);
+                }
             } else {
                // drawingStrings[k1] = items.get(l1);
                 drawingStrings.put(k1,items.get(l1));
+                if (drawingFonts != null) {
+                    drawingFonts.put(k1, fonts.get(l1));
+                }
             }
             k1++;
         }
@@ -598,13 +637,17 @@ public class LoopView extends View {
 
 
     private void drawOuterText(Canvas canvas, int position) {
-        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect),
-                getDrawingY(), paintOuterText);
+        if (drawingFonts != null) {
+            paintOuterText.setTypeface(drawingFonts.get(position));
+        }
+        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect), getDrawingY(), paintOuterText);
     }
 
     private void drawCenterText(Canvas canvas, int position) {
-        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect),
-                getDrawingY(), paintCenterText);
+        if (drawingFonts != null) {
+            paintCenterText.setTypeface(drawingFonts.get(position));
+        }
+        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect), getDrawingY(), paintCenterText);
     }
 
 
