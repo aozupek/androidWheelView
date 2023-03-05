@@ -638,16 +638,22 @@ public class LoopView extends View {
 
     private void drawOuterText(Canvas canvas, int position) {
         if (drawingFonts != null) {
-            paintOuterText.setTypeface(drawingFonts.get(position));
+            Typeface tf = drawingFonts.get(position);
+            if (tf != null) {
+                paintOuterText.setTypeface(tf);
+            }
         }
         canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect), getDrawingY(), paintOuterText);
     }
 
     private void drawCenterText(Canvas canvas, int position) {
         if (drawingFonts != null) {
-            paintCenterText.setTypeface(drawingFonts.get(position));
+            Typeface tf = drawingFonts.get(position);
+            if (tf != null) {
+                paintCenterText.setTypeface(tf);
+            }
         }
-        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintOuterText, tempRect), getDrawingY(), paintCenterText);
+        canvas.drawText(drawingStrings.get(position).string, getTextX(drawingStrings.get(position).string, paintCenterText, tempRect), getDrawingY(), paintCenterText);
     }
 
 
